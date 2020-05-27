@@ -1,6 +1,7 @@
 <?php
     include_once 'DBConnector.php';
     include_once 'User.php';
+    include_once 'FileUploader.php';
 
     $connect = new DBConnect;
 
@@ -8,17 +9,26 @@
         $first_name=$_POST['first_name'];
         $last_name=$_POST['last_name'];
         $city_name=$_POST['city_name'];
+        
         $username = $_POST['username'];
         $password=$_POST['password'];
+        
+        $utc_timestamp = $_POST['utc_timestamp'];
+        $offset = $_POST['time_zone_effect'];
 
-        $user = new User($first_name,$last_name,$city_name,$username,$password);
-
+        $user = new User($first_name,$last_name,$city_name,$username,$password,$utc_timestamp,$offset);
+        
+        $uploader = new FileUploader();
+        
         if(!$user->validateForm()){
             $user->createFormErrorSessions();
             header("Refresh:0");
             die();
         }
 
+        $uploader->uploadFile();
+        $target_file = $uploader->target_file;
+        
         $result = $user->save($connect->conn);
 
         if($result){
@@ -37,7 +47,7 @@
         <link rel="stylesheet" type="text/css" href="validate.css">
     </head>
     <body>
-        <form method="POST" action="<?=$_SERVER['PHP_SELF']?>" onsubmit="return validateForm() name="user_details" id="user_details">
+        <form method="POST" action="<?=$_SERVER['PHP_SELF']?>" enctype="multipart/form-data" onsubmit="return validateForm() name="user_details" id="user_details">
             <table align="center">
                 <tr>
                     <td>
@@ -66,10 +76,17 @@
                 </tr>
                 <tr>
                     <td><input type="password" name="password" placeholder="Enter Password"required></td>
+                </tr>  
+                 <tr>
+                    <td>Profile Picture: <input type="file" name="fileToUpload" id="fileToUpload"></td>
                 </tr>
                 <tr>
                     <td><button type="submit" name="btn-save"><strong>SAVE</strong></button></td>
                 </tr>
+
+                <input type="hidden" name="utc_timestamp" id="utc_timestamp" value=""/>
+                <input type="hidden" name="time_zone_effect" id="time_zone_effect" value=""/>
+               
                 <tr>
                     <td><a href="AllRecords.php">All Records</a></td>
                 </tr>
