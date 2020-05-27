@@ -12,9 +12,7 @@ class FileUploader
     private $file_size;
     private $final_file_name;
 
-    /**
-     * @return bool
-     */
+   
     public function isUploadOk()
     {
         return $this->uploadOk;
