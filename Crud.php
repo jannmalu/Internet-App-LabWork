@@ -1,7 +1,7 @@
 <?php
    // Implemented by any class
     interface Crud{
-        public function save();
+        public function save($target_file);
         public function readAll();
         public function readUnique();
         public function search();
