@@ -15,31 +15,56 @@ class User implements Crud,Authenticator{
         $this->first_name=$first_name;
         $this->last_name=$last_name;
         $this->city_name=$city_name;
+        
         $this->username=$username;
         $this->password =$password;
+        
+        $this->timestamp=$timestamp;
+        $this->offset=$offset;
 
     }
 
 
-    //user id setter
+    
     public function setUserId($user_id){
         $this->user_id = $user_id;
     }
-    //user id getter
+    
     public function getUserId(){
         return $this->$user_id;
     }
+    
+    public function getTimestamp(){
+        return $this->timestamp;
+    }
 
-    public function save(){
+    public function setTimestamp($timestamp){
+        $this->timestamp = $timestamp;
+    }
+
+    public function getOffset(){
+        return $this->timestamp;
+    }
+
+    public function setOffset($offset){
+        $this->timestamp = $timestamp;
+    }
+
+    public function save($target_file){
             $connect = new DBConnect();
             $fn = $this->first_name;
             $ln = $this->last_name;
             $city = $this->city_name;
             $uname = $this->username;
+        
             $this->hashPassword();
             $pass=$this->password;
+        
+            $off = $this->offset;
+            $time = $this->timestamp;
 
-            $result = mysqli_query($con->conn,"INSERT INTO `user`(`first_name`, `last_name`,`user_city`,`username`,`password`)VALUES('$fn','$ln','$city','$uname','$pass')") or die("Error " .mysql_error());    
+
+             $result = mysqli_query($connect->conn,"INSERT INTO `user`(`first_name`, `last_name`,`user_city`,`username`,`password`,`profile_pic`,`time`, `offset`)VALUES('$fn','$ln','$city','$uname','$pass','$target_file','$off','$time')") or die("Error " .mysqli_error($connect->conn));    
             return $result;
             $connect->closeDatabase();
         }
